@@ -19,25 +19,25 @@ public class WebCrawler {
 	}
 	
 	public static void updateUrlsToSearch(Vector<URL> newLinks) { 
-		lock(urlsToSearch); 
+        synchronized(urlsToSearch) {
 		for (URL next : newLinks) { 
 			urlsToSearch.add(next); 
 		}
-		unlock(urlsToSearch); 
+        }
 	}
 	
 	public static void init() { 
 		while(true) { 
 			URL x = urlsSearching.remove(0); 
 			if(x == null) { 
-				lock(urlsSearching); 
-				lock(urlsToSearch);
+                synchronized(urlsSearching) {
+                synchronized(urlsToSearch) {
 				for(URL next : urlsToSearch) { 
 					urlsSearching.add(next);
 				}
 				urlsToSearch.removeAllElements(); 
-				unlock(urlsSearching);
-				unlock(urlsToSearch);
+			    }
+                }
 				continue; 
 				}
 			while(true) {
